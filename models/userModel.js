@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema(
   {
     fName: { type: String, required: true, maxLength: 50, trim: true },
     lName: { type: String, required: true, maxLength: 50, trim: true },
+    userName: { type: String, required: true, maxLength: 50, trim: true, unique: true },
     email: { type: String, required: true, maxLength: 50, trim: true },
     phone: { type: String, required: true, maxLength: 15, trim: true },
     password: { type: String, required: true, minLength: 8, trim: true },
