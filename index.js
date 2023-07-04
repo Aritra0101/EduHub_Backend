@@ -12,6 +12,9 @@ import userRouter from "./routers/userRouter.js";
 // server configuration
 dotenv.config();
 if (!fs.existsSync("static")) fs.mkdirSync("static");
+if (!fs.existsSync("static/dp")) fs.mkdirSync("static/dp");
+if (!fs.existsSync("static/dp/student")) fs.mkdirSync("static/dp/student");
+if (!fs.existsSync("static/dp/teacher")) fs.mkdirSync("static/dp/teacher");
 
 const app = express();
 

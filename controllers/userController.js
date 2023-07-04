@@ -56,11 +56,16 @@ export const studentRegister = async (req, res) => {
       lName: "required|maxLength:50",
       userName: "required|maxLength:50",
       phone: "required|maxLength:15",
+      gender: "required|maxLength:15",
       dateOfBirth: "required",
       bloodGroup: "required",
       pinCode: "required",
+      about: "required",
       institutionName: "required",
       institutionType: "required",
+      degree: "required",
+      discipline: "required",
+      specilization: "required",
       standard: "required",
     });
 
@@ -81,15 +86,21 @@ export const studentRegister = async (req, res) => {
           email: req.body.email,
           phone: req.body.phone,
           password: hashedPassword,
+          gender: req.body.gender,
           bloodGroup: req.body.bloodGroup,
           dateOfBirth: req.body.dateOfBirth,
           pinCode: req.body.pinCode,
+          about: req.body.about,
           institutionName: req.body.institutionName,
           institutionType: req.body.institutionType,
+          degree: req.body.degree,
+          discipline: req.body.discipline,
+          specilization: req.body.specilization,
           standard: req.body.standard,
         }).lean();
      
       if (signUp) {
+        req.files.image.mv("./static/dp/student" + signUp._id + ".jpg");
         return res.sendStatus(200);
       }
       return res.sendStatus(406);
@@ -146,9 +157,11 @@ export const teacherRegister = async (req, res) => {
       lName: "required|maxLength:50",
       userName: "required|maxLength:50",
       phone: "required|maxLength:15",
+      gender: "required|maxLength:15",
       dateOfBirth: "required",
       bloodGroup: "required",
       pinCode: "required",
+      about: "required",
       experience: "required",
       occupation: "required",
     });
@@ -170,14 +183,17 @@ export const teacherRegister = async (req, res) => {
           email: req.body.email,
           phone: req.body.phone,
           password: hashedPassword,
+          gender: req.body.gender,
           bloodGroup: req.body.bloodGroup,
           dateOfBirth: req.body.dateOfBirth,
           pinCode: req.body.pinCode,
+          about: req.body.about,
           experience: req.body.experience,
           occupation: req.body.occupation,
         }).lean();
      
       if (signUp) {
+        req.files.image.mv("./static/dp/teacher" + signUp._id + ".jpg");
         return res.sendStatus(200);
       }
       return res.sendStatus(406);
