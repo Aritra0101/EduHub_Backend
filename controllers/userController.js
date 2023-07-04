@@ -204,3 +204,30 @@ export const teacherRegister = async (req, res) => {
   }
 };
 
+export const checkUserName = async (req, res) => {
+  try {
+    let vld = new Validator(req.body, {
+      userName: "required|maxLength:50",
+    });
+
+    vld = await vld.check();
+    if (!vld) return res.sendStatus(400);
+
+    const sUserName = await studentModel
+      .findOne({ userName: req.body.userName })
+      .lean();
+    const tUserName = await teacherModel
+      .findOne({ userName: req.body.userName })
+      .lean();
+
+    if (tUser || sUser) {
+      return res.sendStatus(409);
+    } else {
+      return res.sendStatus(202);
+    }    
+  } catch (error) {
+    console.error(error);
+    return res.status(500);
+  }
+};
+

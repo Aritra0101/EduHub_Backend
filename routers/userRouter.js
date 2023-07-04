@@ -9,6 +9,8 @@ router.post('/student/register', userController.studentRegister);
 router.post('/teacher/login', userController.teacherLogin);
 router.post('/teacher/register', userController.teacherRegister);
 
+router.post('/checkUserName', userController.checkUserName);
+
 
 
 export default router;
