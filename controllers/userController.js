@@ -1,13 +1,11 @@
-import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { Validator } from "node-input-validator";
 
 import studentModel from "../models/studentModel.js";
 import teacherModel from "../models/teacherModel.js";
 
 const saltRounds = bcrypt.genSaltSync(15);
-
 
 
 export const studentLogin = async (req, res) => {
@@ -74,31 +72,31 @@ export const studentRegister = async (req, res) => {
 
     const sUser = await studentModel.findOne({ email: req.body.email }).lean();
     const tUser = await teacherModel.findOne({ email: req.body.email }).lean();
-    if (sUser || tUser){
+    if (sUser || tUser) {
       return res.sendStatus(409);
     } else {
       const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
 
       const signUp = await teacherModel.create({
-          fName: req.body.fName,
-          lName: req.body.lName,
-          userName: req.body.userName,
-          email: req.body.email,
-          phone: req.body.phone,
-          password: hashedPassword,
-          gender: req.body.gender,
-          bloodGroup: req.body.bloodGroup,
-          dateOfBirth: req.body.dateOfBirth,
-          pinCode: req.body.pinCode,
-          about: req.body.about,
-          institutionName: req.body.institutionName,
-          institutionType: req.body.institutionType,
-          degree: req.body.degree,
-          discipline: req.body.discipline,
-          specilization: req.body.specilization,
-          standard: req.body.standard,
-        }).lean();
-     
+        fName: req.body.fName,
+        lName: req.body.lName,
+        userName: req.body.userName,
+        email: req.body.email,
+        phone: req.body.phone,
+        password: hashedPassword,
+        gender: req.body.gender,
+        bloodGroup: req.body.bloodGroup,
+        dateOfBirth: req.body.dateOfBirth,
+        pinCode: req.body.pinCode,
+        about: req.body.about,
+        institutionName: req.body.institutionName,
+        institutionType: req.body.institutionType,
+        degree: req.body.degree,
+        discipline: req.body.discipline,
+        specilization: req.body.specilization,
+        standard: req.body.standard,
+      }).lean();
+
       if (signUp) {
         req.files.image.mv("./static/dp/student" + signUp._id + ".jpg");
         return res.sendStatus(200);
@@ -171,27 +169,27 @@ export const teacherRegister = async (req, res) => {
 
     const tUser = await teacherModel.findOne({ email: req.body.email }).lean();
     const sUser = await studentModel.findOne({ email: req.body.email }).lean();
-    if (tUser || sUser){
+    if (tUser || sUser) {
       return res.sendStatus(409);
     } else {
       const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
 
       const signUp = await teacherModel.create({
-          fName: req.body.fName,
-          lName: req.body.lName,
-          userName: req.body.userName,
-          email: req.body.email,
-          phone: req.body.phone,
-          password: hashedPassword,
-          gender: req.body.gender,
-          bloodGroup: req.body.bloodGroup,
-          dateOfBirth: req.body.dateOfBirth,
-          pinCode: req.body.pinCode,
-          about: req.body.about,
-          experience: req.body.experience,
-          occupation: req.body.occupation,
-        }).lean();
-     
+        fName: req.body.fName,
+        lName: req.body.lName,
+        userName: req.body.userName,
+        email: req.body.email,
+        phone: req.body.phone,
+        password: hashedPassword,
+        gender: req.body.gender,
+        bloodGroup: req.body.bloodGroup,
+        dateOfBirth: req.body.dateOfBirth,
+        pinCode: req.body.pinCode,
+        about: req.body.about,
+        experience: req.body.experience,
+        occupation: req.body.occupation,
+      }).lean();
+
       if (signUp) {
         req.files.image.mv("./static/dp/teacher" + signUp._id + ".jpg");
         return res.sendStatus(200);
@@ -216,7 +214,7 @@ export const checkUserName = async (req, res) => {
     const sUserName = await studentModel
       .findOne({ userName: req.body.userName })
       .lean();
-    const tUserName = await teacherModel
+    const tUserName = await teacher
       .findOne({ userName: req.body.userName })
       .lean();
 
@@ -224,7 +222,7 @@ export const checkUserName = async (req, res) => {
       return res.sendStatus(409);
     } else {
       return res.sendStatus(202);
-    }    
+    }
   } catch (error) {
     console.error(error);
     return res.status(500);
