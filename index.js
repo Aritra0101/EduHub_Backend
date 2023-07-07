@@ -1,10 +1,10 @@
-import express from "express";
-import mongoose from "mongoose";
-import upload from "express-fileupload";
-import helmet from "helmet";
-import dotenv from "dotenv";
 import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import upload from "express-fileupload";
 import fs from "fs";
+import helmet from "helmet";
+import mongoose from "mongoose";
 
 // import routers
 import userRouter from "./routers/userRouter.js";
@@ -26,7 +26,13 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ limit: "5mb", extended: true }));
 app.use("/static", express.static("static"));
 
-mongoose.connect(process.env.MONGO_DB, () => console.log("DB connected"));
+
+const DB = () => mongoose.connect(process.env.MONGO_DB).then(() => {
+  console.log("DB successfully connected :)");
+}).catch((err) => {
+  console.log("Not Connected :(", err);
+})
+DB();
 
 // routes
 app.use("/user", userRouter);
