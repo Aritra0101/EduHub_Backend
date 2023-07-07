@@ -29,7 +29,7 @@ export const studentLogin = async (req, res) => {
                     data: doc,
                   },
                   process.env.JWT_KEY,
-                  { expiresIn: "1h" }
+                  { expiresIn: "24h" }
                 );
     
                 return res.sendStatus(202).json({ token });
@@ -130,7 +130,7 @@ export const teacherLogin = async (req, res) => {
                     data: doc,
                   },
                   process.env.JWT_KEY,
-                  { expiresIn: "1h" }
+                  { expiresIn: "24h" }
                 );
     
                 return res.sendStatus(202).json({ token });

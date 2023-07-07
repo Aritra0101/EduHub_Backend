@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 
-import institutionType from "../constant/institutionType.js";
-
-const studentSchema = mongoose.Schema({
+const teacherSchema = mongoose.Schema({
   fName: { type: String, required: true, maxLength: 50, trim: true },
   lName: { type: String, required: true, maxLength: 50, trim: true },
   userName: { type: String, required: true, maxLength: 50, trim: true, unique: true },
@@ -29,4 +27,4 @@ const studentSchema = mongoose.Schema({
   { timestamps: true }
 );
 
-export default mongoose.model("studentModel", studentSchema);
+export default mongoose.model("teacherModel", teacherSchema);
