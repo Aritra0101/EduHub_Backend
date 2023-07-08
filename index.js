@@ -8,11 +8,13 @@ import mongoose from "mongoose";
 
 // import routers
 import userRouter from "./routers/userRouter.js";
+import bookRouter from "./routers/bookRouter.js"
 
 // server configuration
 dotenv.config();
 if (!fs.existsSync("static")) fs.mkdirSync("static");
 if (!fs.existsSync("static/dp")) fs.mkdirSync("static/dp");
+if (!fs.existsSync("static/book")) fs.mkdirSync("static/book");
 if (!fs.existsSync("static/dp/student")) fs.mkdirSync("static/dp/student");
 if (!fs.existsSync("static/dp/teacher")) fs.mkdirSync("static/dp/teacher");
 
@@ -36,6 +38,7 @@ DB();
 
 // routes
 app.use("/user", userRouter);
+app.use("/book", bookRouter);
 
 
 app.listen(process.env.PORT, () =>
