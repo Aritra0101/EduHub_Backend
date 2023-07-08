@@ -18,13 +18,13 @@ export const studentLogin = async (req, res) => {
         vld = await vld.check();
         if (!vld) return res.sendStatus(400);
     
-        studentModel.findOne({ email: req.body.email, role: 1 }, (err, doc) => {
-          if (doc) {
-            bcrypt.compare(req.body.password, doc.password, (err, result) => {
+        const student = await studentModel.findOne({ email: req.body.email });
+          if (student) {
+            bcrypt.compare(req.body.password, student.password, (err, result) => {
               if (result) {
                 const token = jwt.sign(
                   {
-                    data: doc,
+                    data: student,
                   },
                   process.env.JWT_KEY,
                   { expiresIn: "24h" }
@@ -38,7 +38,6 @@ export const studentLogin = async (req, res) => {
           } else {
             return res.sendStatus(404);
           }
-        });
       } catch (error) {
         console.error(error);
         return res.status(500);
@@ -56,14 +55,13 @@ export const studentRegister = async (req, res) => {
       phone: "required|maxLength:15",
       gender: "required|maxLength:15",
       dateOfBirth: "required",
-      bloodGroup: "required",
       pinCode: "required",
       about: "required",
       institutionName: "required",
       institutionType: "required",
       degree: "required",
       discipline: "required",
-      specilization: "required",
+      specialization: "required",
       standard: "required",
     });
 
@@ -77,7 +75,7 @@ export const studentRegister = async (req, res) => {
     } else {
       const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
 
-      const signUp = await teacherModel.create({
+      const signUp = await studentModel.create({
         fName: req.body.fName,
         lName: req.body.lName,
         userName: req.body.userName,
@@ -93,12 +91,12 @@ export const studentRegister = async (req, res) => {
         institutionType: req.body.institutionType,
         degree: req.body.degree,
         discipline: req.body.discipline,
-        specilization: req.body.specilization,
+        specialization: req.body.specialization,
         standard: req.body.standard,
-      }).lean();
+      });
 
       if (signUp) {
-        req.files.image.mv("./static/dp/student" + signUp._id + ".jpg");
+        req.files.image.mv("./static/dp/student/" + signUp._id + ".jpg");
         return res.sendStatus(200);
       }
       return res.sendStatus(406);
@@ -119,13 +117,14 @@ export const teacherLogin = async (req, res) => {
         vld = await vld.check();
         if (!vld) return res.sendStatus(400);
     
-        teacherModel.findOne({ email: req.body.email, role: 2 }, (err, doc) => {
-          if (doc) {
-            bcrypt.compare(req.body.password, doc.password, (err, result) => {
+        const teacher = await teacherModel.findOne({ email: req.body.email }); 
+        if (teacher) {
+          console.log(req.body)
+            bcrypt.compare(req.body.password, teacher.password, (err, result) => {
               if (result) {
                 const token = jwt.sign(
                   {
-                    data: doc,
+                    data: teacher,
                   },
                   process.env.JWT_KEY,
                   { expiresIn: "24h" }
@@ -139,7 +138,7 @@ export const teacherLogin = async (req, res) => {
           } else {
             return res.sendStatus(404);
           }
-        });
+        
       } catch (error) {
         console.error(error);
         return res.status(500);
@@ -157,7 +156,6 @@ export const teacherRegister = async (req, res) => {
       phone: "required|maxLength:15",
       gender: "required|maxLength:15",
       dateOfBirth: "required",
-      bloodGroup: "required",
       pinCode: "required",
       about: "required",
       experience: "required",
@@ -167,13 +165,14 @@ export const teacherRegister = async (req, res) => {
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
 
+
     const tUser = await teacherModel.findOne({ email: req.body.email }).lean();
     const sUser = await studentModel.findOne({ email: req.body.email }).lean();
     if (tUser || sUser) {
       return res.sendStatus(409);
     } else {
       const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
-
+      
       const signUp = await teacherModel.create({
         fName: req.body.fName,
         lName: req.body.lName,
@@ -188,10 +187,10 @@ export const teacherRegister = async (req, res) => {
         about: req.body.about,
         experience: req.body.experience,
         occupation: req.body.occupation,
-      }).lean();
+      });
 
       if (signUp) {
-        req.files.image.mv("./static/dp/teacher" + signUp._id + ".jpg");
+        req.files.image.mv("./static/dp/teacher/" + signUp._id + ".jpg");
         return res.sendStatus(200);
       }
       return res.sendStatus(406);
