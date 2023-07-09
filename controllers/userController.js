@@ -189,7 +189,7 @@ export const teacherRegister = async (req, res) => {
         password: hashedPassword,
         role: 2,
         gender: req.body.gender,
-        bloodGroups: req.body.bloodGroup,
+        bloodGroup: req.body.bloodGroup,
         dateOfBirth: req.body.dateOfBirth,
         pinCode: req.body.pinCode,
         about: req.body.about,
