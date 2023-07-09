@@ -232,3 +232,19 @@ export const checkUserName = async (req, res) => {
   }
 };
 
+export const addFollower = async (req, res) => {
+
+};
+
+export const removeFollower = async (req, res) => {
+
+};
+
+export const addFollowing = async (req, res) => {
+
+};
+
+export const removeFollowing = async (req, res) => {
+
+};
+

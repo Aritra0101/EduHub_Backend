@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Validator } from "node-input-validator";
 
+import userModel from "../models/userModel.js";
 import bookModel from "../models/bookModel.js";
 
 export const getBook = async (req, res) => {
