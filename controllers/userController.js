@@ -8,7 +8,7 @@ import userModel from '../models/userModel.js';
 const saltRounds = bcrypt.genSaltSync(15);
 
 
-export getUser = async (req, res) => {
+export const getUser = async (req, res) => {
   try {
     let vld = new Validator(req.query, {
       id: "required",
@@ -29,7 +29,7 @@ export getUser = async (req, res) => {
   }
 };
 
-export loginUser = (req, res) => {
+export const loginUser = (req, res) => {
   try {
     let vld = new Validator(req.body, {
       email: "required|email|maxLength:50",
@@ -62,7 +62,7 @@ export loginUser = (req, res) => {
   }
 };
 
-export deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     let vld = new Validator(req.query, {
       id: "reqired",
