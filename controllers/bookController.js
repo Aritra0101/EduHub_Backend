@@ -34,6 +34,7 @@ export const addBook = async (req, res) => {
       author: "required",
       publication: "required",
       edition: "required",
+      price: "required",
 
       userId: "required",
       userType: "required",
@@ -52,6 +53,7 @@ export const addBook = async (req, res) => {
       author: req.body.author,
       publication: req.body.publication,
       edition: req.body.edition,
+      price: req.body.price,
 
       userId: req.body.userId,
       userType: req.body.userType,
