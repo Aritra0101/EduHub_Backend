@@ -10,15 +10,15 @@ export const getBook = async (req, res) => {
     let vld = new Validator(req.query, {
       id: "required",
     });
-
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
 
     const book = await bookModel.findOne({ _id: req.query.id });
+    if(!book) {
+      return res.sendStatus(404);
+    }
     if (book) {
       return res.sendStatus(200).json({ book });
-    } else {
-      return res.sendStatus(404);
     }
   } catch (error) {
     console.error(error);
@@ -29,45 +29,91 @@ export const getBook = async (req, res) => {
 export const addBook = async (req, res) => {
   try {
     let vld = new Validator(req.body, {
-      bookName: "required",
-      description: "required",
-      author: "required",
-      publication: "required",
-      edition: "required",
+      book: "required|maxLength:100",
+      description: "required|maxLength:250",
+      author: "required|maxLength:150",
+      publication: "required|maxLength:150",
+      edition: "required|maxLength:25",
       price: "required",
 
       userId: "required",
-      userType: "required",
-      userFullName: "required",
-      userPinCode: "required",
-      userPhone: "required",
-      userEmail: "required",
     });
 
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
+    else if (!req.files.image) return res.sendStatus(400);
+
+    const user = await userModel.findById(req.body.id).lean();
+    if (!user) return res.sendStatus(404);
 
     const book = await bookModel.create({
-      bookName: req.body.bookName,
+      bookName: req.body.book,
       description: req.body.description,
       author: req.body.author,
       publication: req.body.publication,
       edition: req.body.edition,
       price: req.body.price,
 
-      userId: req.body.userId,
-      userType: req.body.userType,
-      userFullName: req.body.userFullName,
-      userPinCode: req.body.userPinCode,
-      userPhone: req.body.userPhone,
-      userEmail: req.body.userEmail,
+      user: userId,
     });
 
-    if (book) {
-      req.files.image.mv("./static/book/" + book._id + ".jpg");
-      return res.sendStatus(201);
+    if(!book) {
+      return res.sendStatus(406);
     }
-    return res.sendStatus(406);
+    if (book) {
+      req.files.image.mv("./static/book/photo" + book._id + ".jpg");
+      return res.sendStatus(202);
+    }
+    
+  } catch (error) {
+    console.error(error);
+    return res.status(500);
+  }
+};
+
+export const editBook = async (req, res) => {
+  try {
+    let vld = new Validator(req.body, {
+      book: "required|maxLength:100",
+      description: "required|maxLength:250",
+      author: "required|maxLength:150",
+      publication: "required|maxLength:150",
+      edition: "required|maxLength:25",
+      price: "required",
+
+      userId: "required",
+      bookId: "required",
+    });
+
+    vld = await vld.check();
+    if (!vld) return res.sendStatus(400);
+    else if (!req.files.image) return res.sendStatus(400);
+
+    const user = await userModel.findById(req.body.userId).lean();
+    if (!user) return res.sendStatus(404);
+    const book = await bookModel.findById(req.body.bookId).lean();
+    if (!book) return res.sendStatus(404);
+
+    const newBook = await bookModel.updateOne(
+      { user: userId },
+      {
+        $set: {
+          book: req.body.book,
+          description: req.body.description,
+          author: req.body.author,
+          publication: req.body.publication,
+          edition: req.body.edition,
+          price: req.body.price,
+        },
+      }
+    );
+    if (!newBook) {
+      return res.sendStatus(406);
+    }
+    if (newBook) {
+      req.files.image.mv("./static/book/" + book._id + ".jpg");
+      return res.sendStatus(202);
+    }
   } catch (error) {
     console.error(error);
     return res.status(500);
@@ -76,34 +122,24 @@ export const addBook = async (req, res) => {
 
 export const deleteBook = async (req, res) => {
   try {
-    let vld = new Validator(req.body, {
+    let vld = new Validator(req.query, {
       id: "required",
     });
-
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
 
-    const book = await bookModel.findOne({ _id: req.body.id });
-    if (book) {
-      bookModel
-        .deletedOne({ _id: req.body.id })
-        .then((data) => {
-            fs.unlink("./book/id.jpg", function (err) {
-              if (err) return console.log(err);
-            });  
-          res.sendStatus(200);
-        })
-        .catch((err) => {
-          console.error(err);
-          res.sendStatus(406);
-        });
-    } else {
-      return res.sendStatus(404);
+    const book = await bookModel.deleteOne({ _id: req.query.id });
+    if(!book) {
+      res.sendStatus(406);
+    }
+    if(book) {
+      fs.unlink("./static/book/photo/id.jpg", function (err) {
+        if (err) return console.log(err);
+      });
+      res.sendStatus(204);
     }
   } catch (error) {
     console.error(error);
     return res.status(500);
   }
 };
-
-export const editBook = async (req, res) => {};

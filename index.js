@@ -14,7 +14,7 @@ import bookRouter from "./routers/bookRouter.js"
 dotenv.config();
 if (!fs.existsSync("static")) fs.mkdirSync("static");
 if (!fs.existsSync("static/user/dp")) fs.mkdirSync("static/user/dp");
-if (!fs.existsSync("static/book")) fs.mkdirSync("static/book");
+if (!fs.existsSync("static/book/photo")) fs.mkdirSync("static/book/photo");
 
 const app = express();
 
