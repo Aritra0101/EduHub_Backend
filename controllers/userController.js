@@ -164,7 +164,7 @@ export const teacherRegister = async (req, res) => {
       gender: "maxLength:25",
       bloodGroup: "maxLength:5",      
       dateOfBirth: "required",
-      pinCode: "required|min:100000|max:99999",
+      pinCode: "required|min:100000|max:999999",
       about: "maxLength:500",
 
       experience: "required|min:0|max:75",
