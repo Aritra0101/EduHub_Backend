@@ -8,7 +8,8 @@ const bookSchema = mongoose.Schema(
     author: { type: String, required: true, maxLength: 150, trim: true },
     publication: { type: String, required: true, maxLength: 150, trim: true },
     edition: { type: String, required: true, maxLength: 25, trim: true },
-
+    price: { type: Number, required: true, },
+    
     userId: { type: String, required: true, trim: true },
     userType: { type: String, required: true, trim: true },
     userFullName: { type: String, required: true, maxLength: 101, trim: true },

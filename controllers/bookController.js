@@ -7,7 +7,7 @@ import bookModel from "../models/bookModel.js";
 
 export const getBook = async (req, res) => {
   try {
-    let vld = new Validator(req.body, {
+    let vld = new Validator(req.query, {
       id: "required",
     });
 
