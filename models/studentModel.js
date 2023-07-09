@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 import institutionType from "../constant/institutionType.js";
+import blogType from "../constant/blogType.js";
 
 const studentSchema = mongoose.Schema({
   fName: { type: String, required: true, maxLength: 50, trim: true },

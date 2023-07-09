@@ -3,88 +3,130 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Validator } from "node-input-validator";
 
-import studentModel from "../models/studentModel.js";
-import teacherModel from "../models/teacherModel.js";
+import userModel from '../models/userModel.js';
 
 const saltRounds = bcrypt.genSaltSync(15);
 
 
-export const studentLogin = async (req, res) => {
+export getUser = async (req, res) => {
   try {
-        let vld = new Validator(req.body, {
-          email: "required|email|maxLength:50",
-          password: "required|minLength:8|maxLength:25",
-        });
-    
-        vld = await vld.check();
-        if (!vld) return res.sendStatus(400);
-    
-        const student = await studentModel.findOne({ email: req.body.email });
-          if (student) {
-            bcrypt.compare(req.body.password, student.password, (err, result) => {
-              if (result) {
-                const token = jwt.sign(
-                  {
-                    data: student,
-                  },
-                  process.env.JWT_KEY,
-                  { expiresIn: "24h" }
-                );
-    
-                return res.sendStatus(202).json({ token });
-              } else {
-                return res.sendStatus(401);
-              }
-            });
-          } else {
-            return res.sendStatus(404);
-          }
-      } catch (error) {
-        console.error(error);
-        return res.status(500);
-      }
+    let vld = new Validator(req.query, {
+      id: "required",
+    });
+    vld = await vld.check();
+    if(!vld) return res.status(400);
+
+    const user = await userModel.findOne({ _id: req.query.id});
+    if(!user) {
+      return res.send(404);
+    }
+    if(user) {
+      return res.sendStatus(200).json({ user });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500);
+  }
+};
+
+export loginUser = (req, res) => {
+  try {
+    let vld = new Validator(req.body, {
+      email: "required|email|maxLength:50",
+      password: "required|minLength:8|maxLength:25",
+    });
+
+    vld = await vld.check();
+    if(!vld) return res.status(400);
+
+    const user = userModel.findOne({ email: req.body.email });
+    if(!user) {
+     res.status(404); 
+    }
+    if(user) {
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
+        if(result) {
+          const token = jwt.sign(
+            { data: student },
+            process.env.JWT_KEY,
+            { expiresIn: "24h" }
+          );
+        } else {
+          return res.sendStatus(401);
+        }
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500);
+  }
+};
+
+export deleteUser = async (req, res) => {
+  try {
+    let vld = new Validator(req.query, {
+      id: "reqired",
+    });
+    vld = await vld.check();
+    if(!vld) return res.status(400);
+
+    const user = await userModel.deleteOne({ _id: req.query.id});
+    if(!user) {
+      return res.send(406);
+    }
+    if(user) {
+      fs.unlink("./static/user/dp/id.jpg", (err) => {
+        if (err) return console.log(err);
+      }); 
+      return res.send(204);
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500);
+  }
 };
 
 export const studentRegister = async (req, res) => {
   try {
     let vld = new Validator(req.body, {
-      email: "required|email|maxLength:50",
-      password: "required|minLength:8|maxLength:15",
-      fName: "required|maxLength:50",
+      fName: "required|maxLength:25",
       lName: "required|maxLength:50",
       userName: "required|maxLength:50",
+      email: "required|email|maxLength:50",
       phone: "required|maxLength:15",
-      gender: "required|maxLength:15",
+      password: "required|minLength:8|maxLength:25",
+      gender: "maxLength:25",
+      bloodGroup: "maxLength:5",      
       dateOfBirth: "required",
-      pinCode: "required",
-      about: "required",
-      institutionName: "required",
-      institutionType: "required",
-      degree: "required",
-      discipline: "required",
-      specialization: "required",
-      standard: "required",
-    });
+      pinCode: "required|min:100000|max:99999",
+      about: "maxLength:500",
 
+      institutionName: "maxLength:100",
+      institutionType: "maxLength:50",
+      degree: "maxLength:100",
+      discipline: "maxLength:50",
+      specialization: "maxLength:75",
+      standard: "maxLength:15",
+    });
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
 
-    const sUser = await studentModel.findOne({ email: req.body.email }).lean();
-    const tUser = await teacherModel.findOne({ email: req.body.email }).lean();
-    if (sUser || tUser) {
+    const user = await userModel.find({ $or: [{email: req.body.email}, {phone: req.body.phone}, {userName: req.body.userName}] });
+    if(user) {
       return res.sendStatus(409);
-    } else {
+    }
+    if(!user) {
       const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
-
-      const signUp = await studentModel.create({
+      const register = await userModel.create({
         fName: req.body.fName,
         lName: req.body.lName,
         userName: req.body.userName,
         email: req.body.email,
         phone: req.body.phone,
         password: hashedPassword,
+        role: 1,
         gender: req.body.gender,
-        bloodGroup: req.body.bloodGroup,
+        bloodGroups: req.body.bloodGroup,
         dateOfBirth: req.body.dateOfBirth,
         pinCode: req.body.pinCode,
         about: req.body.about,
@@ -95,9 +137,8 @@ export const studentRegister = async (req, res) => {
         specialization: req.body.specialization,
         standard: req.body.standard,
       });
-
-      if (signUp) {
-        req.files.image.mv("./static/dp/student/" + signUp._id + ".jpg");
+      if (register) {
+        req.files.image.mv("./static/dp/" + register._id + ".jpg");
         return res.sendStatus(200);
       }
       return res.sendStatus(406);
@@ -108,90 +149,51 @@ export const studentRegister = async (req, res) => {
   }
 };
 
-export const teacherLogin = async (req, res) => {
-  try {
-        let vld = new Validator(req.body, {
-          email: "required|email|maxLength:50",
-          password: "required|minLength:8|maxLength:25",
-        });
-    
-        vld = await vld.check();
-        if (!vld) return res.sendStatus(400);
-    
-        const teacher = await teacherModel.findOne({ email: req.body.email }); 
-        if (teacher) {
-          console.log(req.body)
-            bcrypt.compare(req.body.password, teacher.password, (err, result) => {
-              if (result) {
-                const token = jwt.sign(
-                  {
-                    data: teacher,
-                  },
-                  process.env.JWT_KEY,
-                  { expiresIn: "24h" }
-                );
-    
-                return res.sendStatus(202).json({ token });
-              } else {
-                return res.sendStatus(401);
-              }
-            });
-          } else {
-            return res.sendStatus(404);
-          }
-        
-      } catch (error) {
-        console.error(error);
-        return res.status(500);
-      }
-};
-
 export const teacherRegister = async (req, res) => {
-  try {
+ try {
     let vld = new Validator(req.body, {
-      email: "required|email|maxLength:50",
-      password: "required|minLength:8|maxLength:15",
-      fName: "required|maxLength:50",
+      fName: "required|maxLength:25",
       lName: "required|maxLength:50",
       userName: "required|maxLength:50",
+      email: "required|email|maxLength:50",
       phone: "required|maxLength:15",
-      gender: "required|maxLength:15",
+      password: "required|minLength:8|maxLength:25",
+      gender: "maxLength:25",
+      bloodGroup: "maxLength:5",      
       dateOfBirth: "required",
-      pinCode: "required",
-      about: "required",
-      experience: "required",
-      occupation: "required",
-    });
+      pinCode: "required|min:100000|max:99999",
+      about: "maxLength:500",
 
+      experience: "required|min:0|max:75",
+      occupation: "requied|maxLength:75"
+    });
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
 
-
-    const tUser = await teacherModel.findOne({ email: req.body.email }).lean();
-    const sUser = await studentModel.findOne({ email: req.body.email }).lean();
-    if (tUser || sUser) {
+    const user = await userModel.find({ $or: [{email: req.body.email}, {phone: req.body.phone}, {userName: req.body.userName}] });
+    if(user) {
       return res.sendStatus(409);
-    } else {
+    }
+    if(!user) {
       const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
-      
-      const signUp = await teacherModel.create({
+      const register = await userModel.create({
         fName: req.body.fName,
         lName: req.body.lName,
         userName: req.body.userName,
         email: req.body.email,
         phone: req.body.phone,
         password: hashedPassword,
+        role: 2,
         gender: req.body.gender,
-        bloodGroup: req.body.bloodGroup,
+        bloodGroups: req.body.bloodGroup,
         dateOfBirth: req.body.dateOfBirth,
         pinCode: req.body.pinCode,
         about: req.body.about,
         experience: req.body.experience,
         occupation: req.body.occupation,
       });
-
-      if (signUp) {
-        req.files.image.mv("./static/dp/teacher/" + signUp._id + ".jpg");
+      if (register) {
+        req.files.image.mv("./static/user/dp/" + register._id + ".jpg");
         return res.sendStatus(200);
       }
       return res.sendStatus(406);
@@ -207,22 +209,17 @@ export const checkUserName = async (req, res) => {
     let vld = new Validator(req.body, {
       userName: "required|maxLength:50",
     });
-
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
 
-    const sUserName = await studentModel
-      .findOne({ userName: req.body.userName })
-      .lean();
-    const tUserName = await teacher
-      .findOne({ userName: req.body.userName })
-      .lean();
-
-    if (tUser || sUser) {
-      return res.sendStatus(409);
-    } else {
+    const userName = userModel.findOne({ userName: req.body.userName });
+    if(!userName) {
       return res.sendStatus(202);
     }
+    if(userName) {
+      return res.sendStatus(409);
+    }
+
   } catch (error) {
     console.error(error);
     return res.status(500);

@@ -14,7 +14,7 @@ export const getBook = async (req, res) => {
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
 
-    const book = await bookModel.findOne({ _id: req.body.id });
+    const book = await bookModel.findOne({ _id: req.query.id });
     if (book) {
       return res.sendStatus(200).json({ book });
     } else {
