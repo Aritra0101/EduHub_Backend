@@ -72,7 +72,7 @@ export const addBook = async (req, res) => {
   }
 };
 
-export const deletBook = async (req, res) => {
+export const deleteBook = async (req, res) => {
   try {
     let vld = new Validator(req.body, {
       id: "required",
