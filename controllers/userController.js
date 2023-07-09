@@ -110,6 +110,7 @@ export const studentRegister = async (req, res) => {
     });
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
+    else if (!req.files.image) return res.sendStatus(400);
 
     const user = await userModel.find({ $or: [{email: req.body.email}, {phone: req.body.phone}, {userName: req.body.userName}] });
     if(user) {
@@ -137,11 +138,13 @@ export const studentRegister = async (req, res) => {
         specialization: req.body.specialization,
         standard: req.body.standard,
       });
+      if (!register) {
+        return res.sendStatus(406);
+      }
       if (register) {
         req.files.image.mv("./static/dp/" + register._id + ".jpg");
         return res.sendStatus(200);
       }
-      return res.sendStatus(406);
     }
   } catch (error) {
     console.error(error);
@@ -169,6 +172,7 @@ export const teacherRegister = async (req, res) => {
     });
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
+    else if (!req.files.image) return res.sendStatus(400);
 
     const user = await userModel.find({ $or: [{email: req.body.email}, {phone: req.body.phone}, {userName: req.body.userName}] });
     if(user) {
@@ -192,11 +196,13 @@ export const teacherRegister = async (req, res) => {
         experience: req.body.experience,
         occupation: req.body.occupation,
       });
+      if(!register) {
+        return res.sendStatus(406);
+      }
       if (register) {
         req.files.image.mv("./static/user/dp/" + register._id + ".jpg");
         return res.sendStatus(200);
       }
-      return res.sendStatus(406);
     }
   } catch (error) {
     console.error(error);
