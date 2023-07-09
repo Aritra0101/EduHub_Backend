@@ -29,7 +29,7 @@ export const getUser = async (req, res) => {
   }
 };
 
-export const loginUser = (req, res) => {
+export const loginUser = async (req, res) => {
   try {
     let vld = new Validator(req.body, {
       email: "required|email|maxLength:50",
