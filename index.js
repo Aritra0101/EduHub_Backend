@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 // import routers
 import userRouter from "./routers/userRouter.js";
 import bookRouter from "./routers/bookRouter.js"
+import studyMaterial from "./routers/studyMaterial.js"
 
 // server configuration
 dotenv.config();
@@ -17,6 +18,10 @@ if (!fs.existsSync("static/user")) fs.mkdirSync("static/user");
 if (!fs.existsSync("static/user/dp")) fs.mkdirSync("static/user/dp");
 if (!fs.existsSync("static/book")) fs.mkdirSync("static/book");
 if (!fs.existsSync("static/book/photo")) fs.mkdirSync("static/book/photo");
+if (!fs.existsSync("static/studyMaterial")) fs.mkdirSync("static/studyMaterial");
+if (!fs.existsSync("static/studyMaterial/jpg")) fs.mkdirSync("static/studyMaterial/jpg");
+if (!fs.existsSync("static/studyMaterial/png")) fs.mkdirSync("static/studyMaterial/png");
+if (!fs.existsSync("static/studyMaterial/pdf")) fs.mkdirSync("static/studyMaterial/pdf");
 
 const app = express();
 
@@ -39,6 +44,7 @@ DB();
 // routes
 app.use("/user", userRouter);
 app.use("/book", bookRouter);
+app.use("/studyMaterial, studyMaterialRouter");
 
 
 app.listen(process.env.PORT, () =>
