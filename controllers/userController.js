@@ -260,3 +260,11 @@ export const removeFollowing = async (req, res) => {
 
 };
 
+export const savePost = async (req, res) => {
+
+}
+
+export const unSavePost = async (req, res) => {
+
+}
+
