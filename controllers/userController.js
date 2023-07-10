@@ -94,11 +94,11 @@ export const studentRegister = async (req, res) => {
       userName: "required|maxLength:50",
       email: "required|email|maxLength:50",
       phone: "required|maxLength:15",
-      password: "required|minLength:8|maxLength:25",
+      password: "required|minLength:8",
       gender: "maxLength:25",
       bloodGroup: "maxLength:5",      
       dateOfBirth: "required",
-      pinCode: "required|min:100000|max:99999",
+      pinCode: "required|min:100000|max:999999",
       about: "maxLength:500",
 
       institutionName: "maxLength:100",
@@ -110,9 +110,9 @@ export const studentRegister = async (req, res) => {
     });
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
-    else if (!req.files.image) return res.sendStatus(400);
+    // else if (!req.files.image) return res.sendStatus(400);
 
-    const user = await userModel.find({ $or: [{email: req.body.email}, {phone: req.body.phone}, {userName: req.body.userName}] });
+    const user = await userModel.findOne({ $or: [{email: req.body.email}, {phone: req.body.phone}, {userName: req.body.userName}] });
     if(user) {
       return res.sendStatus(409);
     }
@@ -160,7 +160,7 @@ export const teacherRegister = async (req, res) => {
       userName: "required|maxLength:50",
       email: "required|email|maxLength:50",
       phone: "required|maxLength:15",
-      password: "required|minLength:8|maxLength:25",
+      password: "required|minLength:8",
       gender: "maxLength:25",
       bloodGroup: "maxLength:5",      
       dateOfBirth: "required",
@@ -200,7 +200,7 @@ export const teacherRegister = async (req, res) => {
         return res.sendStatus(406);
       }
       if (register) {
-        req.files.image.mv("./static/user/dp/" + register._id + ".jpg");
+        req.files[0].image.mv("./static/user/dp/" + register._id + ".jpg");
         return res.sendStatus(200);
       }
     }

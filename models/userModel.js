@@ -33,7 +33,6 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       minLength: 8,
-      maxLength: 25,
       trim: true,
     },
     role: {
@@ -88,8 +87,8 @@ const userSchema = mongoose.Schema(
     specialization: { type: String, maxLength: 75, trim: true },
     standard: { type: String, maxLength: 15, trim: true },
 
-    experience: { type: Number, required: true, min: 0, max: 75 },
-    occupation: { type: String, required: true, maxlength: 100 },
+    experience: { type: Number, min: 0, max: 75 },
+    occupation: { type: String, maxlength: 100 },
   },
   { timestamps: true }
 );
