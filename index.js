@@ -23,8 +23,8 @@ if (!fs.existsSync("static/studyMaterial")) fs.mkdirSync("static/studyMaterial")
 if (!fs.existsSync("static/studyMaterial/jpg")) fs.mkdirSync("static/studyMaterial/jpg");
 if (!fs.existsSync("static/studyMaterial/png")) fs.mkdirSync("static/studyMaterial/png");
 if (!fs.existsSync("static/studyMaterial/pdf")) fs.mkdirSync("static/studyMaterial/pdf");
-if (!fs.existsSync("static/qna")) fs.mkdirSync("static/qna");
-if (!fs.existsSync("static/qna/photo")) fs.mkdirSync("static/qna/photo");
+// if (!fs.existsSync("static/qna")) fs.mkdirSync("static/qna");
+// if (!fs.existsSync("static/qna/photo")) fs.mkdirSync("static/qna/photo");
 
 const app = express();
 
