@@ -8,8 +8,8 @@ import mongoose from "mongoose";
 
 // import routers
 import userRouter from "./routers/userRouter.js";
-import bookRouter from "./routers/bookRouter.js"
-import studyMaterial from "./routers/studyMaterial.js"
+import bookRouter from "./routers/bookRouter.js";
+import studyMaterial from "./routers/studyMaterialRouter.js"
 
 // server configuration
 dotenv.config();
@@ -44,7 +44,7 @@ DB();
 // routes
 app.use("/user", userRouter);
 app.use("/book", bookRouter);
-app.use("/studyMaterial, studyMaterialRouter");
+app.use("/studyMaterial", studyMaterial);
 
 
 app.listen(process.env.PORT, () =>
