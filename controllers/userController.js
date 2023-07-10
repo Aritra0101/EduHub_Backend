@@ -39,23 +39,35 @@ export const loginUser = async (req, res) => {
     vld = await vld.check();
     if(!vld) return res.status(400);
 
-    const user = userModel.findOne({ email: req.body.email });
-    if(!user) {
-     res.status(404); 
-    }
-    if(user) {
-      bcrypt.compare(req.body.password, user.password, (err, result) => {
-        if(result) {
-          const token = jwt.sign(
-            { data: student },
-            process.env.JWT_KEY,
-            { expiresIn: "24h" }
-          );
-        } else {
-          return res.sendStatus(401);
-        }
-      });
-    }
+    // const user = userModel.findOne({ email: req.body.email });
+    // if(!user) {
+    //  res.status(404); 
+    // }
+    // if(user) {
+    //   bcrypt.compare(req.body.password, user.password, (err, result) => {
+    //     if(result) {
+    //       const token = jwt.sign(
+    //         { data: student },
+    //         process.env.JWT_KEY,
+    //         { expiresIn: "24h" }
+    //       );
+    //     } else {
+    //       return res.sendStatus(401);
+    //     }
+    //   });
+    // }
+
+    const user = await userModel.findOne({ email: req.body.email });
+    if (!user) return res.status(400).json({ message: "User does't exists." });
+
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid Credentials." });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY);
+
+    res.status(200).json({ token, user });
+
   } catch (error) {
     console.error(error);
     return res.status(500);
@@ -75,7 +87,7 @@ export const deleteUser = async (req, res) => {
       return res.send(406);
     }
     if(user) {
-      fs.unlink("./static/user/dp/id.jpg", (err) => {
+      fs.unlink("./static/user/dp/" + id + ".jpg", (err) => {
         if (err) return console.log(err);
       }); 
       return res.send(204);
@@ -168,7 +180,7 @@ export const teacherRegister = async (req, res) => {
       about: "maxLength:500",
 
       experience: "required|min:0|max:75",
-      occupation: "requied|maxLength:75"
+      occupation: "required|maxLength:75"
     });
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
@@ -200,7 +212,7 @@ export const teacherRegister = async (req, res) => {
         return res.sendStatus(406);
       }
       if (register) {
-        req.files[0].image.mv("./static/user/dp/" + register._id + ".jpg");
+        req.files.image.mv("./static/user/dp/" + register._id + ".jpg");
         return res.sendStatus(200);
       }
     }

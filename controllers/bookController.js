@@ -55,14 +55,14 @@ export const addBook = async (req, res) => {
       edition: req.body.edition,
       price: req.body.price,
 
-      user: user,
+      user: user._id,
     });
 
     if(!book) {
       return res.sendStatus(406);
     }
     if (book) {
-      req.files.image.mv("./static/book/photo" + book._id + ".jpg");
+      req.files.image.mv("./static/book/photo/" + book._id + ".jpg");
       return res.sendStatus(202);
     }
     
@@ -96,7 +96,7 @@ export const editBook = async (req, res) => {
     if (!book) return res.sendStatus(404);
 
     const newBook = await bookModel.updateOne(
-      { user: userId },
+      { _id : book.id,},
       {
         $set: {
           book: req.body.book,
@@ -105,6 +105,7 @@ export const editBook = async (req, res) => {
           publication: req.body.publication,
           edition: req.body.edition,
           price: req.body.price,
+          user: user._id,
         },
       }
     );
@@ -112,7 +113,10 @@ export const editBook = async (req, res) => {
       return res.sendStatus(406);
     }
     if (newBook) {
-      req.files.image.mv("./static/book/" + book._id + ".jpg");
+      fs.unlink("./static/book/photo/" + id + ".jpg", function (err) {
+        if (err) return console.log(err);
+      });
+      req.files.image.mv("./static/book/photo" + book._id + ".jpg");
       return res.sendStatus(202);
     }
   } catch (error) {
@@ -129,12 +133,12 @@ export const deleteBook = async (req, res) => {
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
 
-    const book = await bookModel.deleteOne({ _id: req.query.id });
+    const book = await bookModel.fineOneAndDelete({ _id: req.query.id });
     if(!book) {
       res.sendStatus(406);
     }
     if(book) {
-      fs.unlink("./static/book/photo/id.jpg", function (err) {
+      fs.unlink("./static/book/photo/" + id + ".jpg", function (err) {
         if (err) return console.log(err);
       });
       res.sendStatus(204);
