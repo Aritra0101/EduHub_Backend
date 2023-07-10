@@ -110,7 +110,7 @@ export const studentRegister = async (req, res) => {
     });
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
-    // else if (!req.files.image) return res.sendStatus(400);
+    else if (!req.files || !req.files.image) return res.sendStatus(400);
 
     const user = await userModel.findOne({ $or: [{email: req.body.email}, {phone: req.body.phone}, {userName: req.body.userName}] });
     if(user) {
@@ -127,7 +127,7 @@ export const studentRegister = async (req, res) => {
         password: hashedPassword,
         role: 1,
         gender: req.body.gender,
-        bloodGroups: req.body.bloodGroup,
+        bloodGroup: req.body.bloodGroup,
         dateOfBirth: req.body.dateOfBirth,
         pinCode: req.body.pinCode,
         about: req.body.about,
@@ -172,7 +172,7 @@ export const teacherRegister = async (req, res) => {
     });
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
-    else if (!req.files.image) return res.sendStatus(400);
+    else if (!req.files || !req.files.image) return res.sendStatus(400);
 
     const user = await userModel.find({ $or: [{email: req.body.email}, {phone: req.body.phone}, {userName: req.body.userName}] });
     if(user) {

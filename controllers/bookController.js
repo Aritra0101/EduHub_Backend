@@ -42,7 +42,7 @@ export const addBook = async (req, res) => {
 
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
-    else if (!req.files.image) return res.sendStatus(400);
+    else if (!req.files || !req.files.image) return res.sendStatus(400);
 
     const user = await userModel.findById(req.body.id).lean();
     if (!user) return res.sendStatus(404);
@@ -88,7 +88,7 @@ export const editBook = async (req, res) => {
 
     vld = await vld.check();
     if (!vld) return res.sendStatus(400);
-    else if (!req.files.image) return res.sendStatus(400);
+    else if (!req.files || !req.files.image) return res.sendStatus(400);
 
     const user = await userModel.findById(req.body.userId).lean();
     if (!user) return res.sendStatus(404);
