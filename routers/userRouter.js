@@ -15,7 +15,7 @@ import {
 } from "../controllers/userController.js";
 
 router.get("/getUser", getUser);
-router.post("login", loginUser);
+router.post("/login", loginUser);
 router.delete("/deleteUser", deleteUser);
 router.post("/student/register", studentRegister);
 router.post("/teacher/register", teacherRegister);
