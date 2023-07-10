@@ -154,7 +154,7 @@ export const studentRegister = async (req, res) => {
         return res.sendStatus(406);
       }
       if (register) {
-        req.files.image.mv("./static/dp/" + register._id + ".jpg");
+        req.files.image.mv("./static/user/dp/" + register._id + ".jpg");
         return res.sendStatus(200);
       }
     }
